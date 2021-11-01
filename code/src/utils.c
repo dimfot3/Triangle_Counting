@@ -54,25 +54,83 @@ void read_matrix(char** path, struct COO_mtx* mtx)
     
     mtx->nz_size = nz;
     mtx->mat_size = M;
-    mtx->row_idx = J;
-    mtx->col_idx = I;
+    mtx->row_idx = I;
+    mtx->col_idx = J;
 }
 
-//sparce matrix from coordinate list to compressed row index
+//sparce matrix from coordinate list to compressed row index ***indexes doesNOT need to be sorted***! COMPLEXITY: (O(nz(A)+ N))
 void coo_to_csr(struct COO_mtx* mtx, struct CSR_mtx* new_mtx)
 {
+    clock_t t = clock();
     new_mtx->nz_size = mtx->nz_size;
     new_mtx->mat_size = mtx->mat_size;
-    new_mtx->col_idx = (int*) malloc(mtx->nz_size * sizeof(int));
-    new_mtx->row_idx = (int*) malloc((mtx->mat_size + 1) * sizeof(int));
-    
-    for (int i = 0; i < mtx->nz_size; i++)
-    {
-        new_mtx->col_idx[i] = mtx->col_idx[i];
-        new_mtx->row_idx[mtx->row_idx[i] + 1]++;
+    new_mtx->col_idx = (int*) calloc(mtx->nz_size, sizeof(int));
+    new_mtx->row_idx = (int*) calloc((mtx->mat_size + 1), sizeof(int));
+
+    //calculation of the compressed row indexes of len n+1
+    for(int i = 0; i < new_mtx->nz_size; i++){            
+        new_mtx->row_idx[mtx->row_idx[i]]++;
     }
-    for (int i = 0; i < mtx->mat_size; i++)
-    {
-        new_mtx->row_idx[i+1] += new_mtx->row_idx[i];
+    for(int i = 0, cumsum = 0; i < mtx->mat_size; i++){     
+        int temp = new_mtx->row_idx[i];
+        new_mtx->row_idx[i] = cumsum;
+        cumsum += temp;
     }
+    new_mtx->row_idx[mtx->mat_size] = mtx->nz_size; 
+    //calculation of the column indexes
+    for(int i = 0; i < new_mtx->nz_size; i++){
+        int row  = mtx->row_idx[i];
+        int dest = new_mtx->row_idx[row];
+        new_mtx->col_idx[dest] = mtx->col_idx[i];
+        new_mtx->row_idx[row]++;
+    }
+    //restoring the row indexes
+    for(int i = 0, last = 0; i <= new_mtx->mat_size; i++){
+        int temp = new_mtx->row_idx[i];
+        new_mtx->row_idx[i]  = last;
+        last = temp;
+        
+    }
+    t = clock() - t;
+    double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+    printf("\nSuccessfully transformed matrix from COO to CSR in %0.3f seconds\n", time_taken);
+}
+
+//sparce matrix from coordinate list to compressed col indexes ***indexes doesNOT need to be sorted***! COMPLEXITY: (O(nz(A)+ N))
+void coo_to_csc(struct COO_mtx* mtx, struct CSC_mtx* new_mtx)
+{
+    clock_t t = clock();
+    new_mtx->nz_size = mtx->nz_size;
+    new_mtx->mat_size = mtx->mat_size;
+    new_mtx->row_idx = (int*) calloc(mtx->nz_size, sizeof(int));
+    new_mtx->col_idx = (int*) calloc((mtx->mat_size + 1), sizeof(int));
+
+    //calculation of the compressed col indexes of len n+1
+    for(int i = 0; i < new_mtx->nz_size; i++){            
+        new_mtx->col_idx[mtx->col_idx[i]]++;
+    }
+    for(int i = 0, cumsum = 0; i < mtx->mat_size; i++){     
+        int temp = new_mtx->col_idx[i];
+        new_mtx->col_idx[i] = cumsum;
+        cumsum += temp;
+    }
+    new_mtx->col_idx[mtx->mat_size] = mtx->nz_size;
+   
+    //calculation of the row indexes of len nzlen
+    for(int i = 0; i < new_mtx->nz_size; i++){
+        int col  = mtx->col_idx[i];
+        int dest = new_mtx->col_idx[col];
+        new_mtx->row_idx[dest] = mtx->row_idx[i];
+        new_mtx->col_idx[col]++;
+    }
+    //restoring the col indexes
+    for(int i = 0, last = 0; i <= new_mtx->mat_size; i++){
+        int temp = new_mtx->col_idx[i];
+        new_mtx->col_idx[i]  = last;
+        last = temp;
+    }
+
+    t = clock() - t;
+    double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+    printf("\nSuccessfully transformed matrix from COO to CSC in %0.3f seconds\n", time_taken);
 }

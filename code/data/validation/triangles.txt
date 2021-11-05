@@ -1,0 +1,8 @@
+dataset num_of_traingles
+../data/dblp-2010.mtx 1676652.0
+../data/road_central.mtx 228918.0
+../data/mycielskian13.mtx 0.0
+../data/com-Youtube.mtx 3056386.0
+../data/NACA0015.mtx 2075635.0
+../data/ 2420.0
+../data/italy_osm.mtx 7410.0

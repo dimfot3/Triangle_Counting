@@ -4,7 +4,7 @@
 #include <time.h>
 #include "utils.h"
 
-void read_matrix(char** path, struct COO_mtx* mtx)
+void read_matrix(char** path, struct COO_mtx* mtx, int full_mat)
 {
     
     int ret_code;
@@ -34,14 +34,24 @@ void read_matrix(char** path, struct COO_mtx* mtx)
     //finds some basic of the matrix
     if ((ret_code = mm_read_mtx_crd_size(f, &M, &N, &nz)) !=0)
         exit(1);
+    int half_nz = nz;
+    if(full_mat)
+    {
+        nz *= 2;
+    }
     // reseve memory for matrices 
     I = (int *) malloc(nz * sizeof(int));
     J = (int *) malloc(nz * sizeof(int));
-    for (i=0; i<nz; i++)
+    for (i=0; i<half_nz; i++)
     {
         fscanf(f, "%d %d\n", &I[i], &J[i]);
         I[i]--;  /* adjust from 1-based to 0-based */
         J[i]--;
+        if(full_mat)
+        {
+            I[i + half_nz] = J[i];
+            J[i + half_nz] = I[i];
+        }
     }
     if (f !=stdin) fclose(f);
 

@@ -14,5 +14,9 @@ add_executable(utils_test src/utils_test.cpp)
 target_include_directories(utils_test PUBLIC ../src/)
 target_link_libraries(utils_test PUBLIC utils gtest_main)
 
+add_executable(seq_masked_implement src/seq_implementation_test.cpp)
+target_include_directories(seq_masked_implement PUBLIC ../src/)
+target_link_libraries(seq_masked_implement PUBLIC utils gtest_main seq_masked_implementation)
 
 gtest_discover_tests(utils_test)
+gtest_discover_tests(seq_masked_implement)

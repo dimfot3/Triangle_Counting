@@ -35,6 +35,7 @@ endif(GET_DATASET)
 file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY results DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+
 if(BUILD_TESTING)
     enable_testing()
     add_subdirectory(tests) 

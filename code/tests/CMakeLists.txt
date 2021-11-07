@@ -18,5 +18,7 @@ add_executable(seq_masked_implement src/seq_implementation_test.cpp)
 target_include_directories(seq_masked_implement PUBLIC ../src/)
 target_link_libraries(seq_masked_implement PUBLIC utils gtest_main seq_masked_implementation)
 
+file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/tests/)
+
 gtest_discover_tests(utils_test)
 gtest_discover_tests(seq_masked_implement)

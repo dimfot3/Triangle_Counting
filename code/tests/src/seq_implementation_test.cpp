@@ -10,7 +10,8 @@ TEST(sequential, t1) {
   struct CSR_mtx *mtx_csr_fmt = (CSR_mtx*) malloc(sizeof(struct CSR_mtx));
   read_matrix((char**)"../data/test.mtx", mtx_coo_fmt, 0);
   coo_to_csr(mtx_coo_fmt, mtx_csr_fmt);
-  float num = triagle_counting_sequential_masked_implementation(mtx_csr_fmt);
+  float time_taken;
+  float num = triagle_counting_sequential_masked_implementation(mtx_csr_fmt,&time_taken,0);
   EXPECT_EQ(3, num);
 };
 
@@ -20,7 +21,8 @@ TEST(sequential, t2) {
   struct CSR_mtx *mtx_csr_fmt = (CSR_mtx*) malloc(sizeof(struct CSR_mtx));
   read_matrix((char**)"../data/test2.mtx", mtx_coo_fmt, 0);
   coo_to_csr(mtx_coo_fmt, mtx_csr_fmt);
-  float num = triagle_counting_sequential_masked_implementation(mtx_csr_fmt);
+  float time_taken;
+  float num = triagle_counting_sequential_masked_implementation(mtx_csr_fmt,&time_taken,0);
   EXPECT_EQ(12, num);
 };
 

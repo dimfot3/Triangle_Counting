@@ -1,15 +1,69 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <time.h>
+#include <assert.h>
 #include "utils.h"
 #include <sequential_masked_implementation.h>
+#include "benchmarks.h"
+
+struct session_args
+{
+    char *name;
+    int option;     //0:pthreads, 1:opemmpi, 2:opencilk
+    int num_of_loops;
+    int full_mat;
+};
+struct tm buf;
+void set_args(int argc, char** argv, struct session_args* ses_args)
+{
+    ses_args->name = "OK.txt";
+    time_t t = time(NULL);
+    struct tm *timeptr;
+    timeptr = localtime(&t);
+    ses_args->name = (char*)malloc(sizeof(char)*40);
+    assert(strftime(ses_args->name,50,"results/ses_%d_%m_%y_%H_%M_%S.txt", timeptr));
+    ses_args->option = 0;
+    ses_args->num_of_loops = 1;
+    ses_args->full_mat = 0;
+    if(argc == 2)
+    {
+        ses_args->option = atoi(argv[1]);
+    }
+    else if(argc == 3)
+    {
+        ses_args->full_mat = atoi(argv[2]);
+    }
+    printf("OK\n");
+    return;
+}
+
+void run_session(struct session_args *ses_args)
+{
+    FILE *f = fopen(ses_args->name, "w");
+    struct datasets *dt = (struct datasets*)malloc(sizeof(struct datasets));
+    dt->path = (char*)malloc(sizeof(char)*6);
+    dt->path = "data/\0";
+    list_dataset(dt);
+    for(int i = 0; i < dt->size; i++)
+    {   
+        printf("%s\n", dt->list[i]);
+        struct COO_mtx *mtx_coo_fmt =  malloc(sizeof(struct COO_mtx));
+        struct CSR_mtx *mtx_csr_fmt =  malloc(sizeof(struct CSR_mtx));
+        read_matrix(dt->list[i], mtx_coo_fmt, ses_args->full_mat);
+        coo_to_csr(mtx_coo_fmt, mtx_csr_fmt);
+        float mean_time = time_bechmark(triagle_counting_sequential_masked_implementation,mtx_csr_fmt, ses_args->num_of_loops);
+        fprintf(f, "%s mean time: %f\n", dt->list[i], mean_time);
+        free(mtx_coo_fmt);
+        free(mtx_csr_fmt);
+    }
+    fclose(f);
+}
 
 int main(int argc, char** argv)
 {
-    struct COO_mtx *mtx_coo_fmt =  malloc(sizeof(struct COO_mtx));
-    struct CSR_mtx *mtx_csr_fmt =  malloc(sizeof(struct CSR_mtx));
-    read_matrix("data/belgium_osm.mtx", mtx_coo_fmt, 1);
-    coo_to_csr(mtx_coo_fmt, mtx_csr_fmt);
-    float num = triagle_counting_sequential_masked_implementation(mtx_csr_fmt);
+    struct session_args *ses_args = (struct session_args*)malloc(sizeof(struct session_args));
+    set_args(argc, argv, ses_args);
+    run_session(ses_args);
     return 0;
 }

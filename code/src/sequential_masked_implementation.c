@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "sequential_masked_implementation.h"
 
-float triagle_counting_sequential_masked_implementation(struct CSR_mtx *mtx, double *time_taken)        //O(N)
+float triagle_counting_sequential_masked_implementation(struct CSR_mtx *mtx, float *time_taken, int verbose)        //O(N)
 {
     clock_t t = clock();
     //int *temp_mtx = (int*) calloc(mtx->nz_size,sizeof(int));
@@ -33,10 +33,13 @@ float triagle_counting_sequential_masked_implementation(struct CSR_mtx *mtx, dou
             }
         }
     }
-    printf("\ncounter: %d\n",counter);
     t = clock() - t;
-    time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
-    printf("\nSequential Masked implementation: %f s\n",time_taken);
-    printf("\ntriangles: %f\n",triangles);
+    *time_taken = ((float)t)/CLOCKS_PER_SEC; // in seconds
+    if(verbose)
+    {
+        printf("\ncounter: %d\n",counter);
+        printf("\nSequential Masked implementation: %f s\n",*time_taken);
+        printf("\ntriangles: %f\n",triangles);
+    }
     return triangles;
 }

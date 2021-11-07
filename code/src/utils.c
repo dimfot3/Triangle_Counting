@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "mmio.h"
-#include <time.h>
 #include "utils.h"
-
+#include <dirent.h>
+#include <time.h>
 void read_matrix(char** path, struct COO_mtx* mtx, int full_mat)
 {
     
@@ -143,4 +143,54 @@ void coo_to_csc(struct COO_mtx* mtx, struct CSC_mtx* new_mtx)
     t = clock() - t;
     double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
     printf("\nSuccessfully transformed matrix from COO to CSC in %0.3f seconds\n", time_taken);
+}
+
+
+void list_dataset(struct datasets* dt)
+{
+    DIR *d;
+    struct dirent *dir;
+    int size_of_path = strlen(dt->path);
+    dt->size = 0;
+    d = opendir(dt->path);
+    if (d) {
+        while ((dir = readdir(d)) != NULL) {
+            const char *ext = strrchr(dir->d_name,'.');
+            if((!ext) || (ext == dir->d_name))
+                continue;
+            else if(strcmp(ext, ".mtx") == 0)
+            {
+                dt->size++;
+            }
+        }
+    }
+    closedir(d);
+    d = opendir(dt->path);
+    dt->list = (char**) malloc(sizeof(char*)*dt->size);
+    int counter = 0;
+    if (d) {
+        while ((dir = readdir(d)) != NULL) {
+            const char *ext = strrchr(dir->d_name,'.');
+            if((!ext) || (ext == dir->d_name))
+                continue;
+            else if(strcmp(ext, ".mtx") == 0)
+            {
+                int size_of_dataset = strlen(dir->d_name);
+                dt->list[counter] = (char*)malloc((size_of_path + size_of_dataset + 1) * sizeof(char));
+                for(int i = 0; i < size_of_path; i++)
+                {
+                    dt->list[counter][i] = dt->path[i];
+                }
+                for(int i = size_of_path; i < size_of_path + size_of_dataset; i++)
+                {
+                    dt->list[counter][i] = dir->d_name[i-size_of_path];
+                }
+                dt->list[counter][size_of_dataset+size_of_path] = '\0';
+                counter++;
+            }
+        }    
+        
+
+    }
+    closedir(d);
 }

@@ -29,9 +29,21 @@ function sequential_masked_triangle_counting( mtx )
 	return temp
 end
 
-datasets = glob("../data/*.mtx") #if searching the working directory
-for i in datasets
-	M = mmread(i)
-	print(sequential_masked_triangle_counting(M), "\n")
+function tamudata(group, data)
+	url = "https://suitesparse-collection-website.herokuapp.com/mat/$group/$data.mat"
+	save_path = download(url)
+	vars = matread(save_path)
+    A = vars["Problem"]["A"]
 end
 
+A = tamudata("SNAP", "com-Youtube")
+#print(nnz(A))
+print(sequential_masked_triangle_counting(A), "\n")
+#=
+datasets = glob("../data/com*.mtx") #if searching the working directory
+for i in datasets
+	M = mmread(i)
+	print(nnz(M))
+	#print(sequential_masked_triangle_counting(M), "\n")
+end
+=#

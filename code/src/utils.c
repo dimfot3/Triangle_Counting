@@ -4,6 +4,7 @@
 #include "utils.h"
 #include <dirent.h>
 #include <time.h>
+
 void read_matrix(char** path, struct COO_mtx* mtx, int full_mat)
 {
     
@@ -76,7 +77,6 @@ void coo_to_csr(struct COO_mtx* mtx, struct CSR_mtx* new_mtx)
     new_mtx->mat_size = mtx->mat_size;
     new_mtx->col_idx = (int*) calloc(mtx->nz_size, sizeof(int));
     new_mtx->row_idx = (int*) calloc((mtx->mat_size + 1), sizeof(int));
-
     //calculation of the compressed row indexes of len n+1
     for(int i = 0; i < new_mtx->nz_size; i++){            
         new_mtx->row_idx[mtx->row_idx[i]]++;
@@ -99,7 +99,6 @@ void coo_to_csr(struct COO_mtx* mtx, struct CSR_mtx* new_mtx)
         int temp = new_mtx->row_idx[i];
         new_mtx->row_idx[i]  = last;
         last = temp;
-        
     }
     t = clock() - t;
     double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
@@ -193,4 +192,21 @@ void list_dataset(struct datasets* dt)
 
     }
     closedir(d);
+}
+
+int binarySearch(int arr[], int l, int r, int x)
+{
+    if (r >= l) {
+        int mid = l + (r - l) / 2;
+ 
+        if (arr[mid] == x)
+            return mid;
+ 
+        if (arr[mid] > x)
+            return binarySearch(arr, l, mid - 1, x);
+ 
+        return binarySearch(arr, mid + 1, r, x);
+    }
+
+    return -1;
 }

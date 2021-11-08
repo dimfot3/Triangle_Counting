@@ -34,7 +34,6 @@ struct datasets
 
 struct implementation_args
 {
-    float time_taken;
     int num_of_threads;
     int full_mat;
     int verbose;
@@ -51,5 +50,6 @@ void coo_to_csr(struct COO_mtx* mtx, struct CSR_mtx* new_mtx);
 void coo_to_csc(struct COO_mtx* mtx, struct CSC_mtx* new_mtx);
 void coo_to_csc(struct COO_mtx* mtx, struct CSC_mtx* new_mtx);
 void list_dataset(struct datasets* dt);
+int binarySearch(int arr[], int l, int r, int x);
 
 #endif

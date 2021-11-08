@@ -7,6 +7,7 @@
 #include <sequential_masked_implementation.h>
 #include <pthreads_implementation.h>
 #include "benchmarks.h"
+#include <openmp_implementation.h>
 
 struct session_args
 {
@@ -62,7 +63,11 @@ void run_session(struct session_args *ses_args)
             fprintf(f, "%s mean time: %f var time: %f triangle_num: %f\n", dt->list[i], res.mean_time, res.var_time, num_of_triangles);
         }
         else if(ses_args->ses_option==1 && ses_args->bechmark_option==0){
-            time_bechmark(triagle_counting_pthread_implementation, mtx_csr_fmt, ses_args->num_of_loops, &num_of_triangles, ses_args->full_mat, &res);
+            time_bechmark(triangle_counting_pthread_implementation, mtx_csr_fmt, ses_args->num_of_loops, &num_of_triangles, ses_args->full_mat, &res);
+            fprintf(f, "%s mean time: %f var time: %f triangle_num: %f\n", dt->list[i], res.mean_time, res.var_time, num_of_triangles);
+        }
+        else if(ses_args->ses_option==2 && ses_args->bechmark_option==0){
+            time_bechmark(triangle_counting_openmp_implementation, mtx_csr_fmt, ses_args->num_of_loops, &num_of_triangles, ses_args->full_mat, &res);
             fprintf(f, "%s mean time: %f var time: %f triangle_num: %f\n", dt->list[i], res.mean_time, res.var_time, num_of_triangles);
         }
         free(mtx_coo_fmt);
@@ -76,5 +81,6 @@ int main(int argc, char** argv)
     struct session_args *ses_args = (struct session_args*)malloc(sizeof(struct session_args));
     set_args(argc, argv, ses_args);
     run_session(ses_args);
+    
     return 0;
 }

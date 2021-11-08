@@ -15,7 +15,6 @@ TEST(sequential, t1) {
   func_args.num_of_threads = 0;
   func_args.full_mat = 0;
   func_args.verbose = 0;
-  func_args.time_taken = 0;
   float num = triagle_counting_sequential_masked_implementation(mtx_csr_fmt,&func_args);
   EXPECT_EQ(3, num);
 };
@@ -31,7 +30,6 @@ TEST(sequential, t2) {
   func_args.num_of_threads = 0;
   func_args.full_mat = 1;
   func_args.verbose = 0;
-  func_args.time_taken = 0;
   float num = triagle_counting_sequential_masked_implementation(mtx_csr_fmt, &func_args);
   EXPECT_EQ(3, num);
 };

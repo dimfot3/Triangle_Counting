@@ -1,2 +1,2 @@
 
-float triagle_counting_sequential_masked_implementation(struct CSR_mtx *mtx, float* time_taken, int verbose);
+float triagle_counting_sequential_masked_implementation(struct CSR_mtx *mtx, struct implementation_args *args);

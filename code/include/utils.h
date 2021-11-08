@@ -32,6 +32,20 @@ struct datasets
     int size;
 };
 
+struct implementation_args
+{
+    float time_taken;
+    int num_of_threads;
+    int full_mat;
+    int verbose;
+};
+
+struct results
+{
+    float mean_time;
+    float var_time;
+};
+
 void read_matrix(char** path, struct COO_mtx* mtx, int full_mat);
 void coo_to_csr(struct COO_mtx* mtx, struct CSR_mtx* new_mtx);
 void coo_to_csc(struct COO_mtx* mtx, struct CSC_mtx* new_mtx);

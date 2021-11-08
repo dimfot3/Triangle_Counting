@@ -15,15 +15,18 @@ add_library(matrix_loader src/mmio.c)
 #sequential masked implementation
 add_library(seq_masked_implementation src/sequential_masked_implementation.c)
 
-#sequential masked implementation
+#bechmarks 
 add_library(benchmarks src/benchmarks.c)
+
+#pthread implementation
+add_library(pthrd_implementation src/pthreads_implementation.c)
 
 #library for loading matrix for matrix market
 add_library(utils src/utils.c)
 target_link_libraries(utils matrix_loader)
 
 add_executable(tri_counter src/triangle_counting.c)
-target_link_libraries(tri_counter PUBLIC -lpthread utils seq_masked_implementation benchmarks)
+target_link_libraries(tri_counter PUBLIC -lpthread utils seq_masked_implementation benchmarks pthrd_implementation)
 
 if(GET_DATASET)
 execute_process (

@@ -5,42 +5,45 @@
 #include <assert.h>
 #include "utils.h"
 #include <sequential_masked_implementation.h>
+#include <pthreads_implementation.h>
 #include "benchmarks.h"
 
 struct session_args
 {
     char *name;
-    int option;     //0:pthreads, 1:opemmpi, 2:opencilk
+    int ses_option;     //0:sequential, 1:pthreads, 2:openmp, 3:opencilk
+    int bechmark_option;    //0: time benchmark, 1:scalability  (only for parallel implementation)
     int num_of_loops;
     int full_mat;
 };
 struct tm buf;
 void set_args(int argc, char** argv, struct session_args* ses_args)
 {
-    ses_args->name = "OK.txt";
     time_t t = time(NULL);
     struct tm *timeptr;
     timeptr = localtime(&t);
     ses_args->name = (char*)malloc(sizeof(char)*40);
     assert(strftime(ses_args->name,50,"results/ses_%d_%m_%y_%H_%M_%S.txt", timeptr));
-    ses_args->option = 0;
+    ses_args->ses_option = 0;
     ses_args->num_of_loops = 1;
+    ses_args->bechmark_option = 0;
     ses_args->full_mat = 0;
-    if(argc == 2)
+    if(argc > 2)
     {
-        ses_args->option = atoi(argv[1]);
+        ses_args->ses_option = atoi(argv[1]);
+        ses_args->bechmark_option = atoi(argv[2]);
+        ses_args->num_of_loops = atoi(argv[3]);
+        ses_args->full_mat = atoi(argv[4]);
     }
-    else if(argc == 3)
-    {
-        ses_args->full_mat = atoi(argv[2]);
-    }
-    printf("OK\n");
     return;
 }
 
 void run_session(struct session_args *ses_args)
 {
+
     FILE *f = fopen(ses_args->name, "w");
+    fprintf(f, "ses_option %d \ benchmark_option %d \ full_mat %d \ num_of_loops %d\n", ses_args->ses_option, ses_args->bechmark_option, 
+            ses_args->full_mat, ses_args->num_of_loops);
     struct datasets *dt = (struct datasets*)malloc(sizeof(struct datasets));
     dt->path = (char*)malloc(sizeof(char)*6);
     dt->path = "data/\0";
@@ -52,8 +55,16 @@ void run_session(struct session_args *ses_args)
         struct CSR_mtx *mtx_csr_fmt =  malloc(sizeof(struct CSR_mtx));
         read_matrix(dt->list[i], mtx_coo_fmt, ses_args->full_mat);
         coo_to_csr(mtx_coo_fmt, mtx_csr_fmt);
-        float mean_time = time_bechmark(triagle_counting_sequential_masked_implementation,mtx_csr_fmt, ses_args->num_of_loops);
-        fprintf(f, "%s mean time: %f\n", dt->list[i], mean_time);
+        float num_of_triangles = 0;
+        struct results res;
+        if(ses_args->ses_option==0){
+            time_bechmark(triagle_counting_sequential_masked_implementation, mtx_csr_fmt, ses_args->num_of_loops, &num_of_triangles, ses_args->full_mat, &res);
+            fprintf(f, "%s mean time: %f var time: %f triangle_num: %f\n", dt->list[i], res.mean_time, res.var_time, num_of_triangles);
+        }
+        else if(ses_args->ses_option==1 && ses_args->bechmark_option==0){
+            time_bechmark(triagle_counting_pthread_implementation, mtx_csr_fmt, ses_args->num_of_loops, &num_of_triangles, ses_args->full_mat, &res);
+            fprintf(f, "%s mean time: %f var time: %f triangle_num: %f\n", dt->list[i], res.mean_time, res.var_time, num_of_triangles);
+        }
         free(mtx_coo_fmt);
         free(mtx_csr_fmt);
     }

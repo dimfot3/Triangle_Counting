@@ -23,7 +23,7 @@ matrix elements are not parsed.
 If retcoord is true (default: false), the rows, column and value vectors
 are returned, if it is a sparse matrix, along with the header information.
 """
-function mmread(filename, infoonly::Bool=false, retcoord::Bool=false)
+function mmread(filename, full_mat=false, infoonly::Bool=false, retcoord::Bool=false)
     open(filename,"r") do mmfile
         # Read first line
         firstline = chomp(readline(mmfile))
@@ -72,7 +72,7 @@ function mmread(filename, infoonly::Bool=false, retcoord::Bool=false)
 
         rr = Vector{Int}(undef, entries)
         cc = Vector{Int}(undef, entries)
-        xx = Vector{eltype}(undef, entries)
+        xx = Vector{Float64}(undef, entries)
         for i in 1:entries
             line = readline(mmfile)
             splits = find_splits(line, eltype == ComplexF64 ? 3 : (eltype == Bool ? 1 : 2))
@@ -85,14 +85,12 @@ function mmread(filename, infoonly::Bool=false, retcoord::Bool=false)
                 imag = parse(Float64, line[splits[3]:length(line)])
                 xx[i] = ComplexF64(real, imag)
             elseif eltype == Bool
-                xx[i] = true
+                xx[i] = 1.0
             else
                 xx[i] = parse(eltype, line[splits[2]:length(line)])
             end
         end
-        (retcoord
-         ? (rr, cc, xx, rows, cols, entries, rep, field, symm)
-         : symlabel(sparse(rr, cc, xx, rows, cols)))
+        full_mat ? symmetric!(sparse(rr, cc, xx, rows, cols)) : sparse(rr, cc, xx, rows, cols)
     end
 end
 

@@ -87,6 +87,7 @@ void coo_to_csr(struct COO_mtx* mtx, struct CSR_mtx* new_mtx)
         cumsum += temp;
     }
     new_mtx->row_idx[mtx->mat_size] = mtx->nz_size; 
+
     //calculation of the column indexes
     for(int i = 0; i < new_mtx->nz_size; i++){
         int row  = mtx->row_idx[i];

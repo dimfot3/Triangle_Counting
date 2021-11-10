@@ -1,19 +1,16 @@
 cmake_minimum_required(VERSION 3.1)
 #these for opencilk
-#set(CMAKE_C_COMPILER /home/fdimitri/openCilk/bin/clang )
-#set(CMAKE_CXX_COMPILER /home/fdimitri/openCilk/bin/clang++)
 option(GET_DATASET OFF)
-option(CILK OFF)
+option(CILK ON)
 
 project(triagle_counting LANGUAGES C CXX)
 include_directories(include)
 
-if(NOT CILK)
-find_package(OpenMP REQUIRED)
+
+find_package(OpenMP)
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -O3")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -O3")
 set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-endif(NOT CILK)
 
 #library for loading matrix for matrix market
 add_library(matrix_loader src/mmio.c)
@@ -48,8 +45,11 @@ endif(GET_DATASET)
 file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY results DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+#build cilk
+ADD_CUSTOM_TARGET(cilk_implemnt ALL COMMAND /bin/sh ${CMAKE_CURRENT_SOURCE_DIR}/build_cilk.sh)
 
 if(BUILD_TESTING)
     enable_testing()
     add_subdirectory(tests) 
 endif(BUILD_TESTING)
+

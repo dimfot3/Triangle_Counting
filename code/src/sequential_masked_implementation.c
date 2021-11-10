@@ -7,7 +7,7 @@
 float triagle_counting_sequential_masked_implementation(struct CSR_mtx *mtx, struct implementation_args *args)        //O(N)
 {
     //int *temp_mtx = (int*) calloc(mtx->nz_size,sizeof(int));
-    float triangles = 0.0;
+    uint triangles = 0.0;
     int counter = 0;
     for(int i = 0; i < mtx->mat_size; i++)          //all rows      
     {
@@ -30,12 +30,12 @@ float triagle_counting_sequential_masked_implementation(struct CSR_mtx *mtx, str
     if(args->verbose)
     {
         printf("\ncounter: %d\n",counter);
-        printf("\ntriangles: %f\n",triangles);
+        printf("\ntriangles: %lf\n",triangles);
     }
    
     if(args->full_mat)
     {
-        triangles/=6.0;
+        triangles/=6;
     }
     return triangles;
 }

@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <utils.h>
+#include <stdlib.h>
 #include "pthreads_implementation.h"
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
@@ -31,7 +32,7 @@ void* obj_function(void* args)
 
 float triangle_counting_pthread_implementation(struct CSR_mtx *mtx, struct implementation_args *args)
 {
-    float total_triangles = 0;
+    uint total_triangles = 0;
     pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
     int remaining_rows = mtx->mat_size % args->num_of_threads;
     struct objective_args *obj_args = (struct objective_args*) malloc(args->num_of_threads *sizeof(struct objective_args));

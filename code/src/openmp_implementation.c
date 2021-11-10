@@ -1,10 +1,10 @@
 #include "utils.h"
 #include <omp.h>
-
+#include <stdlib.h>
 float triangle_counting_openmp_implementation(struct CSR_mtx *mtx, struct implementation_args *args)
 {
     //float *triangle_threads = (float*) calloc(omp_get_max_threads() ,sizeof(float));
-    float triangles = 0.0;
+    uint triangles = 0.0;
     int i = 0;
     omp_lock_t writelock;
     omp_init_lock(&writelock);

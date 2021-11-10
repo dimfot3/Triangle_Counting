@@ -7,7 +7,7 @@ struct objective_args
     int start;      //start of rows
     int end;        //end of rows
     int id;         //num of thread
-    float *triangles;   //array with the triangles
+    uint *triangles;   //array with the triangles
     pthread_mutex_t *mutex1;
     int* C;         //in case you want to calculate the C and not the triangles
 };

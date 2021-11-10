@@ -4,29 +4,52 @@ using SparseArrays
 using Setfield
 using Glob
 include("MatrixMarket.jl")
-function triangle_counting(A)
-	sum(A .* ( A * A ))/6
+
+function binarySearch(arr, l, r, x)
+	while (l <= r)
+        m =  trunc(Int, l + (r - l) / 2)
+ 
+        if (arr[m] == x)
+            return m
+        end
+ 
+        if (arr[m] < x) 
+        	l = m + 1; 
+    	else 
+         	r = m - 1; 
+        end
+    end
+    return -1;
 end
 
+function triangle_counting(A)
+	A .* ( A * A )
+end
+
+#with binary search
 function sequential_masked_triangle_counting( mtx )
+	mtx = copy(mtx)
 	rows = rowvals(mtx)
 	m, n = size(mtx)
 	temp = 0
+	temp_arr = Array{Float64,1}(undef, nnz(mtx))
+	for i = 1:nnz(mtx)
+		temp_arr[i] = 0
+	end
 	for i = 1:m
     	for j in nzrange(mtx, i)
     		row = rows[j]
     		for k in nzrange(mtx, row)
-    			for l in nzrange(mtx, i)
-    				row1 = rows[l]
-                    row2 = rows[k]
-                    if row1 == row2
-                    	temp+=1
-                    end
-				end
+    			row1 = rows[k]
+                succ = binarySearch(mtx.rowval, mtx.colptr[i], mtx.colptr[i+1]-1, row1)
+                if(succ!=-1)
+                	temp_arr[j]+=1
+                end
 			end
 		end 
 	end
-	return temp
+	mtx = @set mtx.nzval = temp_arr
+	return mtx
 end
 
 function tamudata(group, data)
@@ -36,14 +59,11 @@ function tamudata(group, data)
     A = vars["Problem"]["A"]
 end
 
-A = tamudata("SNAP", "com-Youtube")
-#print(nnz(A))
-print(sequential_masked_triangle_counting(A), "\n")
-#=
-datasets = glob("../data/com*.mtx") #if searching the working directory
-for i in datasets
-	M = mmread(i)
-	print(nnz(M))
-	#print(sequential_masked_triangle_counting(M), "\n")
+A_email = tamudata("Arenas", "email")
+
+if triangle_counting( A_email ) == sequential_masked_triangle_counting( A_email )
+	@benchmark sequential_masked_triangle_counting( $A_email )
+else
+	print("**OUTPUT IS INCORRECT! FIX CODE BEFORE BENCHMARKING!**\n")
 end
-=#
+

@@ -16,6 +16,7 @@ struct session_args
     int bechmark_option;    //0: time benchmark, 1:scalability  (only for parallel implementation)
     int num_of_loops;
     int full_mat;
+    int num_of_threads;
 };
 struct tm buf;
 void set_args(int argc, char** argv, struct session_args* ses_args)
@@ -28,13 +29,15 @@ void set_args(int argc, char** argv, struct session_args* ses_args)
     ses_args->ses_option = 0;
     ses_args->num_of_loops = 1;
     ses_args->bechmark_option = 0;
-    ses_args->full_mat = 0;
+    ses_args->full_mat = 1;
+    ses_args->num_of_threads = 1;
     if(argc > 2)
     {
         ses_args->ses_option = atoi(argv[1]);
         ses_args->bechmark_option = atoi(argv[2]);
         ses_args->num_of_loops = atoi(argv[3]);
-        ses_args->full_mat = atoi(argv[4]);
+        ses_args->num_of_threads = atoi(argv[4]);
+        ses_args->full_mat = atoi(argv[5]);
     }
     return;
 }
@@ -43,8 +46,8 @@ void run_session(struct session_args *ses_args)
 {
 
     FILE *f = fopen(ses_args->name, "w");
-    fprintf(f, "ses_option %d \ benchmark_option %d \ full_mat %d \ num_of_loops %d\n", ses_args->ses_option, ses_args->bechmark_option, 
-            ses_args->full_mat, ses_args->num_of_loops);
+    fprintf(f, "ses_option %d \ benchmark_option %d \ full_mat %d \ num_of_loops %d\ num_of_threads %d\n", ses_args->ses_option, ses_args->bechmark_option, 
+            ses_args->full_mat, ses_args->num_of_loops, ses_args->num_of_threads);
     struct datasets *dt = (struct datasets*)malloc(sizeof(struct datasets));
     dt->path = (char*)malloc(sizeof(char)*6);
     dt->path = "data/\0";
@@ -59,16 +62,25 @@ void run_session(struct session_args *ses_args)
         float num_of_triangles = 0;
         struct results res;
         if(ses_args->ses_option==0){
-            time_bechmark(triagle_counting_sequential_masked_implementation, mtx_csr_fmt, ses_args->num_of_loops, &res);
+            time_bechmark(triagle_counting_sequential_masked_implementation, mtx_csr_fmt, ses_args->num_of_loops, ses_args->num_of_threads, &res);
             fprintf(f, "%s mean time: %f var time: %f triangle_num: %d\n", dt->list[i], res.mean_time, res.var_time, res.triangles);
         }
         else if(ses_args->ses_option==1 && ses_args->bechmark_option==0){
-            time_bechmark(triangle_counting_pthread_implementation, mtx_csr_fmt, ses_args->num_of_loops, &res);
+            time_bechmark(triangle_counting_pthread_implementation, mtx_csr_fmt, ses_args->num_of_loops, ses_args->num_of_threads, &res);
             fprintf(f, "%s mean time: %f var time: %f triangle_num: %d\n", dt->list[i], res.mean_time, res.var_time, res.triangles);
         }
         else if(ses_args->ses_option==2 && ses_args->bechmark_option==0){
-            time_bechmark(triangle_counting_openmp_implementation, mtx_csr_fmt, ses_args->num_of_loops, &res);
+            time_bechmark(triangle_counting_openmp_implementation, mtx_csr_fmt, ses_args->num_of_loops, ses_args->num_of_threads, &res);
             fprintf(f, "%s mean time: %f var time: %f triangle_num: %d\n", dt->list[i], res.mean_time, res.var_time, res.triangles);
+        }
+        else if(ses_args->ses_option==1 && ses_args->bechmark_option==1){
+            scalability_bechmark(triangle_counting_openmp_implementation, mtx_csr_fmt, ses_args->num_of_loops, ses_args->num_of_threads, &res);
+            fprintf(f, "%s triangle_num: %d times [", dt->list[i], res.triangles);
+            for(int j = 1; j < 10; j++)
+            {
+                fprintf(f, " %f ", res.scal_time[j-1]);
+            }
+            fprintf(f, "]\n");
         }
         free(mtx_coo_fmt);
         free(mtx_csr_fmt);

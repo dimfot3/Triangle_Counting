@@ -1,1 +1,2 @@
-void time_bechmark( void (*f)(struct CSR_mtx*, struct implementation_args*),struct CSR_mtx *mtx_csr_fmt, int num_of_loops, struct results *res);
+void time_bechmark( void (*f)(struct CSR_mtx*, struct implementation_args*),struct CSR_mtx *mtx_csr_fmt, int num_of_loops, int num_of_threads, struct results *res);
+void scalability_bechmark( void (*f)(struct CSR_mtx*, struct implementation_args*), struct CSR_mtx *mtx_csr_fmt, int num_of_loops, int num_of_threads, struct results *res);

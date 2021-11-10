@@ -47,6 +47,7 @@ struct results
 {
     float mean_time;
     float var_time;
+    float *scal_time;   //this is used in scalability benchmarks
     uint triangles;
 };
 
@@ -56,6 +57,11 @@ void coo_to_csc(struct COO_mtx* mtx, struct CSC_mtx* new_mtx);
 void coo_to_csc(struct COO_mtx* mtx, struct CSC_mtx* new_mtx);
 void list_dataset(struct datasets* dt);
 int binarySearch(int arr[], int l, int r, int x);
+int linearSearch(int arr[], int l, int r, int x);
 uint get_triangles(struct CSR_mtx* mtx);
 void restore_mat(struct CSR_mtx* mtx);
+void swap(int* a, int* b);
+int partition(int arr[], int l, int h);
+void quickSortIterative(int arr[], int l, int h);
+
 #endif

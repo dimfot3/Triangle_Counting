@@ -215,6 +215,16 @@ int binarySearch(int arr[], int l, int r, int x)
     return -1;
 }
 
+int linearSearch(int arr[], int l, int r, int x)
+{
+    for(int i = l; i <= r; i++)
+    {
+        if(arr[i] == x)
+            return i;
+    }
+    return -1;
+}
+
 uint get_triangles(struct CSR_mtx* mtx)
 {
     uint triangles = 0;
@@ -236,3 +246,55 @@ void restore_mat(struct CSR_mtx* mtx)
         mtx->val[i] = 0;
     }
 }
+
+void swap(int* a, int* b)
+{
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+ 
+int partition(int arr[], int l, int h)
+{
+    int x = arr[h];
+    int i = (l - 1);
+ 
+    for (int j = l; j <= h - 1; j++) {
+        if (arr[j] <= x) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[h]);
+    return (i + 1);
+}
+ 
+
+void quickSortIterative(int arr[], int l, int h)
+{
+    if(h <= l){
+        return;
+    }
+    int stack[h - l + 1];
+    int top = -1;
+ 
+    stack[++top] = l;
+    stack[++top] = h;
+ 
+    while (top >= 0) {
+        h = stack[top--];
+        l = stack[top--];
+ 
+        int p = partition(arr, l, h);
+        if (p - 1 > l) {
+            stack[++top] = l;
+            stack[++top] = p - 1;
+        }
+ 
+        if (p + 1 < h) {
+            stack[++top] = p + 1;
+            stack[++top] = h;
+        }
+    }
+}
+ 

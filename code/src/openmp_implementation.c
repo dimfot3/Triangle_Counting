@@ -4,6 +4,11 @@
 
 void triangle_counting_openmp_implementation(struct CSR_mtx *mtx, struct implementation_args *args)
 {
+    //this is used in case the columns in each row are out of order
+    for(int i = 0; i < mtx->mat_size; i++)
+    {
+        quickSortIterative(mtx->col_idx, mtx->row_idx[i], mtx->row_idx[i+1]-1);
+    }
     int i = 0;
     #pragma omp parallel shared(mtx) private(i)
     {

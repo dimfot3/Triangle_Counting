@@ -30,6 +30,10 @@ void* obj_function(void* args)
 
 void triangle_counting_pthread_implementation(struct CSR_mtx *mtx, struct implementation_args *args)
 {
+    for(int i = 0; i < mtx->mat_size; i++)
+    {
+        quickSortIterative(mtx->col_idx, mtx->row_idx[i], mtx->row_idx[i+1]-1);
+    }
     int remaining_rows = mtx->mat_size % args->num_of_threads;
     struct objective_args *obj_args = (struct objective_args*) malloc(args->num_of_threads *sizeof(struct objective_args));
     int last_row = 0;

@@ -4,10 +4,8 @@
 #include "sequential_masked_implementation.h"
 
 
-float triagle_counting_sequential_masked_implementation(struct CSR_mtx *mtx, struct implementation_args *args)        //O(N)
+void triagle_counting_sequential_masked_implementation(struct CSR_mtx *mtx, struct implementation_args *args)        //O(N)
 {
-    //int *temp_mtx = (int*) calloc(mtx->nz_size,sizeof(int));
-    uint triangles = 0.0;
     int counter = 0;
     for(int i = 0; i < mtx->mat_size; i++)          //all rows      
     {
@@ -20,22 +18,14 @@ float triagle_counting_sequential_masked_implementation(struct CSR_mtx *mtx, str
                 int succ = binarySearch(mtx->col_idx, mtx->row_idx[i], mtx->row_idx[i+1]-1, col1);
                 if(succ!=-1)
                 {
-                    triangles+=1;
+                    mtx->val[j]++;
                 }
                 counter++;
             }
         }
     }
-    
     if(args->verbose)
     {
         printf("\ncounter: %d\n",counter);
-        printf("\ntriangles: %lf\n",triangles);
     }
-   
-    if(args->full_mat)
-    {
-        triangles/=6;
-    }
-    return triangles;
 }

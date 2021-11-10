@@ -59,16 +59,16 @@ void run_session(struct session_args *ses_args)
         float num_of_triangles = 0;
         struct results res;
         if(ses_args->ses_option==0){
-            time_bechmark(triagle_counting_sequential_masked_implementation, mtx_csr_fmt, ses_args->num_of_loops, &num_of_triangles, ses_args->full_mat, &res);
-            fprintf(f, "%s mean time: %f var time: %f triangle_num: %f\n", dt->list[i], res.mean_time, res.var_time, num_of_triangles);
+            time_bechmark(triagle_counting_sequential_masked_implementation, mtx_csr_fmt, ses_args->num_of_loops, &res);
+            fprintf(f, "%s mean time: %f var time: %f triangle_num: %d\n", dt->list[i], res.mean_time, res.var_time, res.triangles);
         }
         else if(ses_args->ses_option==1 && ses_args->bechmark_option==0){
-            time_bechmark(triangle_counting_pthread_implementation, mtx_csr_fmt, ses_args->num_of_loops, &num_of_triangles, ses_args->full_mat, &res);
-            fprintf(f, "%s mean time: %f var time: %f triangle_num: %f\n", dt->list[i], res.mean_time, res.var_time, num_of_triangles);
+            time_bechmark(triangle_counting_pthread_implementation, mtx_csr_fmt, ses_args->num_of_loops, &res);
+            fprintf(f, "%s mean time: %f var time: %f triangle_num: %d\n", dt->list[i], res.mean_time, res.var_time, res.triangles);
         }
         else if(ses_args->ses_option==2 && ses_args->bechmark_option==0){
-            time_bechmark(triangle_counting_openmp_implementation, mtx_csr_fmt, ses_args->num_of_loops, &num_of_triangles, ses_args->full_mat, &res);
-            fprintf(f, "%s mean time: %f var time: %f triangle_num: %f\n", dt->list[i], res.mean_time, res.var_time, num_of_triangles);
+            time_bechmark(triangle_counting_openmp_implementation, mtx_csr_fmt, ses_args->num_of_loops, &res);
+            fprintf(f, "%s mean time: %f var time: %f triangle_num: %d\n", dt->list[i], res.mean_time, res.var_time, res.triangles);
         }
         free(mtx_coo_fmt);
         free(mtx_csr_fmt);

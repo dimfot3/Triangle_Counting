@@ -67,6 +67,7 @@ void read_matrix(char** path, struct COO_mtx* mtx, int full_mat)
     mtx->mat_size = M;
     mtx->row_idx = I;
     mtx->col_idx = J;
+    mtx->full_mat = full_mat;
 }
 
 //sparce matrix from coordinate list to compressed row index ***indexes doesNOT need to be sorted***! COMPLEXITY: (O(nz(A)+ N))
@@ -103,6 +104,8 @@ void coo_to_csr(struct COO_mtx* mtx, struct CSR_mtx* new_mtx)
     }
     t = clock() - t;
     double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+    new_mtx->val =(int*) calloc(new_mtx->nz_size, sizeof(int));
+    new_mtx->full_mat = mtx->full_mat;
     printf("\nSuccessfully transformed matrix from COO to CSR in %0.3f seconds\n", time_taken);
 }
 
@@ -139,8 +142,8 @@ void coo_to_csc(struct COO_mtx* mtx, struct CSC_mtx* new_mtx)
         new_mtx->col_idx[i]  = last;
         last = temp;
     }
-
     t = clock() - t;
+    new_mtx->val =(int*) calloc(new_mtx->nz_size, sizeof(int));
     double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
     printf("\nSuccessfully transformed matrix from COO to CSC in %0.3f seconds\n", time_taken);
 }
@@ -210,4 +213,26 @@ int binarySearch(int arr[], int l, int r, int x)
     }
 
     return -1;
+}
+
+uint get_triangles(struct CSR_mtx* mtx)
+{
+    uint triangles = 0;
+    for(int i = 0; i < mtx->nz_size; i++)
+    {
+        triangles+=mtx->val[i];
+    }
+    if(mtx->full_mat)
+    {
+        triangles/=6;
+    }
+    return triangles;
+}
+
+void restore_mat(struct CSR_mtx* mtx)
+{
+    for(int i = 0; i < mtx->nz_size; i++)
+    {
+        mtx->val[i] = 0;
+    }
 }

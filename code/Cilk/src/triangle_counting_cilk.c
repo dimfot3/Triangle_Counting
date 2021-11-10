@@ -6,7 +6,6 @@
 #include "utils.h"
 #include "benchmarks.h"
 #include "triangle_counting_cilk_implementation.h"
-#include <cilk/cilk.h>
 
 struct session_args
 {
@@ -55,8 +54,8 @@ void run_session(struct session_args *ses_args)
         coo_to_csr(mtx_coo_fmt, mtx_csr_fmt);
         float num_of_triangles = 0;
         struct results res;
-        time_bechmark(triangle_counting_cilk_implementation, mtx_csr_fmt, ses_args->num_of_loops, &num_of_triangles, ses_args->full_mat, &res);
-        fprintf(f, "%s mean time: %f var time: %f triangle_num: %f\n", dt->list[i], res.mean_time, res.var_time, num_of_triangles);
+        time_bechmark(triangle_counting_cilk_implementation, mtx_csr_fmt, ses_args->num_of_loops, &res);
+        fprintf(f, "%s mean time: %f var time: %f triangle_num: %d\n", dt->list[i], res.mean_time, res.var_time, res.triangles);
         free(mtx_coo_fmt);
         free(mtx_csr_fmt);
     }

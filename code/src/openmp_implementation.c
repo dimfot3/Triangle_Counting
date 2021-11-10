@@ -1,14 +1,11 @@
-#include "utils.h"
 #include <omp.h>
 #include <stdlib.h>
-float triangle_counting_openmp_implementation(struct CSR_mtx *mtx, struct implementation_args *args)
+#include "utils.h"
+
+void triangle_counting_openmp_implementation(struct CSR_mtx *mtx, struct implementation_args *args)
 {
-    //float *triangle_threads = (float*) calloc(omp_get_max_threads() ,sizeof(float));
-    uint triangles = 0.0;
     int i = 0;
-    omp_lock_t writelock;
-    omp_init_lock(&writelock);
-    #pragma omp parallel shared(mtx, triangles) private(i)
+    #pragma omp parallel shared(mtx) private(i)
     {
         #pragma omp for   
         for(i = 0; i < mtx->mat_size; i++)          //all rows      
@@ -22,19 +19,11 @@ float triangle_counting_openmp_implementation(struct CSR_mtx *mtx, struct implem
                     int succ = binarySearch(mtx->col_idx, mtx->row_idx[i], mtx->row_idx[i+1]-1, col1);
                     if(succ!=-1)
                     {
-                        omp_set_lock(&writelock);
-                        triangles++;
-                        omp_unset_lock(&writelock);
-                        
+                        mtx->val[j]++;                        
                     }
                 }
             }
         }
     }
     #pragma omp barrier
-    if(args->full_mat)
-    {
-        triangles/=6.0;
-    }
-    return triangles;
 }

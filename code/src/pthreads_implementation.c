@@ -1,6 +1,6 @@
 #include <pthread.h>
-#include <utils.h>
 #include <stdlib.h>
+#include <utils.h>
 #include "pthreads_implementation.h"
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
@@ -20,9 +20,7 @@ void* obj_function(void* args)
                 int succ = binarySearch(arguments->mtx->col_idx, arguments->mtx->row_idx[i], arguments->mtx->row_idx[i+1]-1, col1);
                 if(succ!=-1)
                 {
-                    pthread_mutex_lock( arguments->mutex1 );
-                    *(arguments->triangles) += 1;
-                    pthread_mutex_unlock( arguments->mutex1 );
+                    arguments->mtx->val[j]++;
                 }
                 counter++;
             }
@@ -30,10 +28,8 @@ void* obj_function(void* args)
     }
 }
 
-float triangle_counting_pthread_implementation(struct CSR_mtx *mtx, struct implementation_args *args)
+void triangle_counting_pthread_implementation(struct CSR_mtx *mtx, struct implementation_args *args)
 {
-    uint total_triangles = 0;
-    pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
     int remaining_rows = mtx->mat_size % args->num_of_threads;
     struct objective_args *obj_args = (struct objective_args*) malloc(args->num_of_threads *sizeof(struct objective_args));
     int last_row = 0;
@@ -44,8 +40,6 @@ float triangle_counting_pthread_implementation(struct CSR_mtx *mtx, struct imple
         obj_args[i].start = last_row;
         obj_args[i].end = last_row + ((int) mtx->mat_size / args->num_of_threads) + 1 * (remaining_rows-- > 0);
         obj_args[i].id = i;
-        obj_args[i].triangles = &total_triangles;
-        obj_args[i].mutex1 = &mutex1;
         pthread_create(&thread_id[i], NULL, obj_function, &(obj_args[i]));
         last_row = obj_args[i].end;
     }
@@ -55,11 +49,6 @@ float triangle_counting_pthread_implementation(struct CSR_mtx *mtx, struct imple
         pthread_join( thread_id[i], NULL); 
     }
     free(obj_args);
-    if(args->full_mat)
-    {
-        total_triangles/=6.0;
-    }
-    return total_triangles;
 }
 
 

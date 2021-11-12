@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "benchmarks.h"
 #include "triangle_counting_cilk_implementation.h"
+#include <string.h>
 
 struct session_args
 {

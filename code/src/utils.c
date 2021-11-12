@@ -217,7 +217,7 @@ int binarySearch(int arr[], int l, int r, int x)
 
 int linearSearch(int arr[], int l, int r, int x)
 {
-    for(int i = l; i <= r; i++)
+    for(int i = l; i <= r && arr[i] <= x; i++)
     {
         if(arr[i] == x)
             return i;

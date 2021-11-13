@@ -30,7 +30,7 @@ void time_bechmark( void (*f)(struct CSR_mtx*, struct implementation_args*), str
 void scalability_bechmark( void (*f)(struct CSR_mtx*, struct implementation_args*), struct CSR_mtx *mtx_csr_fmt, int num_of_loops, int num_of_threads, struct results *res)
 {
     int max_threads = num_of_threads;
-    res->scal_time = (float*) malloc((max_threads-1)*sizeof(float));
+    res->scal_time = (float*) malloc((max_threads)*sizeof(float));
     struct implementation_args func_args;
     for(int i = 0; i < max_threads; i++)
     {

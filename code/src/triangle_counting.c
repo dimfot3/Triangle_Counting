@@ -82,6 +82,15 @@ void run_session(struct session_args *ses_args)
             }
             fprintf(f, "]\n");
         }
+        else if(ses_args->ses_option==2 && ses_args->bechmark_option==1){
+            scalability_bechmark(triangle_counting_openmp_implementation, mtx_csr_fmt, ses_args->num_of_loops, ses_args->num_of_threads, &res);
+            fprintf(f, "%s triangle_num: %d times [", dt->list[i], res.triangles);
+            for(int j = 0; j < ses_args->num_of_threads; j++)
+            {
+                fprintf(f, " %f ", res.scal_time[j]);
+            }
+            fprintf(f, "]\n");
+        }
         free(mtx_coo_fmt);
         free(mtx_csr_fmt);
     }

@@ -10,8 +10,8 @@ void triangle_counting_openmp_implementation(struct CSR_mtx *mtx, struct impleme
         if(mtx->row_idx[i+1] - mtx->row_idx[i] > 5)
             quickSortIterative(mtx->col_idx, mtx->row_idx[i], mtx->row_idx[i+1]-1);
     }
-    //omp_set_dynamic(0);
-    //omp_set_num_threads(args->num_of_threads);
+    omp_set_dynamic(0);
+    omp_set_num_threads(args->num_of_threads);
     omp_lock_t writelock;
     omp_init_lock(&writelock);
     int com_work = mtx->mat_size;

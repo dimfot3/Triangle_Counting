@@ -70,7 +70,7 @@ void triangle_counting_pthread_implementation(struct CSR_mtx *mtx, struct implem
     {
         pthread_join(thread_id[i], NULL); 
     }
-    free(obj_args);
+    //free(obj_args);
 }
 
 

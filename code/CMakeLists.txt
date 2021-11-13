@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 #these for opencilk
 option(GET_DATASET OFF)
-option(CILK ON)
+option(CILK OFF)
 
 project(triagle_counting LANGUAGES C CXX)
 include_directories(include)
@@ -46,7 +46,9 @@ file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY results DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 #build cilk
+if(CILK)
 ADD_CUSTOM_TARGET(cilk_implemnt ALL COMMAND /bin/sh ${CMAKE_CURRENT_SOURCE_DIR}/build_cilk.sh)
+endif(CILK)
 
 if(BUILD_TESTING)
     enable_testing()

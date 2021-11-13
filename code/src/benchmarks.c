@@ -29,13 +29,13 @@ void time_bechmark( void (*f)(struct CSR_mtx*, struct implementation_args*), str
 
 void scalability_bechmark( void (*f)(struct CSR_mtx*, struct implementation_args*), struct CSR_mtx *mtx_csr_fmt, int num_of_loops, int num_of_threads, struct results *res)
 {
-    int max_threads = 10;
+    int max_threads = num_of_threads;
     res->scal_time = (float*) malloc((max_threads-1)*sizeof(float));
     struct implementation_args func_args;
-    for(int i = 1; i < max_threads; i++)
+    for(int i = 0; i < max_threads; i++)
     {
         float time_taken = 0;
-        func_args.num_of_threads = i;
+        func_args.num_of_threads = i+1;
         func_args.verbose = 0;
         for(int j = 0; j < num_of_loops; j++)
         {      
@@ -49,8 +49,7 @@ void scalability_bechmark( void (*f)(struct CSR_mtx*, struct implementation_args
             res->triangles = get_triangles(mtx_csr_fmt);
             restore_mat(mtx_csr_fmt);
         }
-        printf("hello%f\n",time_taken);
-        res->scal_time[i-1] = time_taken/num_of_loops;
+        res->scal_time[i] = time_taken/num_of_loops;
     }
 }
     

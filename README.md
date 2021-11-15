@@ -11,7 +11,7 @@ This is the first project of Parallel and Distributed Systems lesson of Aristotl
 - For OpenMP implementation additional requirements:
 1) OpenMP library ```sudo apt install libomp-dev```
 
-- For OpenCilk library additional requirements:
+- For OpenCilk implementation additional requirements:
 1) Download clang compiler https://github.com/OpenCilk/opencilk-project/releases/tag/opencilk/v1.0. 
    OpenCilk is deprecated in gcc.
    
@@ -38,12 +38,12 @@ and then add in cmake the option ```-DCILK=ON``` <br />
  nt: the number of threads <br />
  fm: full mat(0:gets only the lower triangular matrix, 1:gets the full mat)
   2) the results of the session are saved inside build/results/ with the name of the current day and time <br />
-- In order to run the openCilk implementation 
+- In order to run the openCilk implementation: <br />
   1) run ```./Cilk/cilk_implementation b nl nt fm``` <br />
      Here the the options b, nt are deprecated as the number of threads changes only with enviroment variable CILK_NWORKERS <br />
   2) To run scalability session run ./run_cilk.sh inside the build folder and the results will saved in buils/results
-- In order to run Julia implementation 
-  1)run ```./julia_test.sh``` in the julia_imeplementation folder and the results of scalability test will be saved in same folder
+- In order to run Julia implementation: <br />
+  1) run ```./julia_test.sh``` in the julia_imeplementation folder and the results of scalability test will be saved in same folder
 
 ## Testing
 There are some google tests to verify correctness of basic utilities. 

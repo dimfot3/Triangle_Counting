@@ -44,7 +44,7 @@ and then add in cmake the option ```-DCILK=ON``` <br />
 - In order to run Julia implementation 
   1)run ```./julia_test.sh``` in the julia_imeplementation folder and the results of scalability test will be saved in same folder
 
-# Testing
+## Testing
 There are some google tests to verify correctness of basic utilities. 
 In order to run the tests:
 1) follow the Build guide to build them

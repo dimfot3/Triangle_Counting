@@ -13,6 +13,11 @@ This is the first project of Parallel and Distributed Systems lesson of Aristotl
 - For OpenCilk library
 1) Download clang compiler https://github.com/OpenCilk/opencilk-project/releases/tag/opencilk/v1.0. 
    OpenCilk is deprecated in gcc.
+   
+- For julia implementation:
+1) install julia >= 1.5.1
+2) run the ```julia requirements.jl``` inside julia_implementation folder to install the requirements
+3) run ```./julia_test.sh``` and in the same folder the results of scalability test will be saved
 
 ## Build
 To run this project run

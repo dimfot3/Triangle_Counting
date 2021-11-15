@@ -121,7 +121,7 @@ for i in data
 	#print(triangle_counting( mat ), "\n")
 	#print(sequential_masked_triangle_counting( mat ))
 	time_1 = @benchmark sequential_masked_triangle_counting( $mat) samples=1
-	time_2 = @benchmark parallel_masked_triangle_counting( $mat ) samples=1
+	time_2 = @benchmark parallel_masked_triangle_counting( $mat) samples=1
 	open(file, "a") do io
 		write(io, "$i seq: $time_1 parallel: $time_2\n")
     end
